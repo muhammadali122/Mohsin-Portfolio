@@ -1,5 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Mail, Phone, MapPin, Send } from 'lucide-react';
+import emailjs from '@emailjs/browser';
+
+const SERVICE_ID = 'service_hwz7287';
+const TEMPLATE_ID = 'template_oapy2jx';
+const PUBLIC_KEY = '9UNpszkMk3UQALzjY'; // aka user ID
 
 const Contact = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -45,27 +50,12 @@ const Contact = () => {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch('/api/contact', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
-
-      if (response.ok) {
-        setFormSubmitted(true);
-        setFormData({
-          name: '',
-          email: '',
-          subject: '',
-          message: ''
-        });
-      } else {
-        throw new Error('Failed to send message');
-      }
+      const result = await emailjs.send(SERVICE_ID, TEMPLATE_ID, formData, PUBLIC_KEY);
+      console.log('Email sent:', result.text);
+      setFormSubmitted(true);
+      setFormData({ name: '', email: '', subject: '', message: '' });
     } catch (error) {
-      console.error('Error sending message:', error);
+      console.error('Failed to send email:', error);
       alert('Failed to send message. Please try again later.');
     } finally {
       setIsSubmitting(false);
@@ -73,8 +63,8 @@ const Contact = () => {
   };
 
   return (
-    <section 
-      id="contact" 
+    <section
+      id="contact"
       ref={sectionRef}
       className="py-20 bg-white"
     >
@@ -86,11 +76,11 @@ const Contact = () => {
           </p>
           <div className="w-20 h-1 bg-blue-700 mx-auto mt-4"></div>
         </div>
-        
+
         <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-10">
           <div className={`transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
             <h3 className="text-2xl font-semibold text-blue-900 mb-6">Get In Touch</h3>
-            
+
             <div className="space-y-6">
               <div className="flex items-start">
                 <div className="flex-shrink-0 bg-blue-100 p-3 rounded-full mr-4">
@@ -103,7 +93,7 @@ const Contact = () => {
                   </a>
                 </div>
               </div>
-              
+
               <div className="flex items-start">
                 <div className="flex-shrink-0 bg-blue-100 p-3 rounded-full mr-4">
                   <Phone size={24} className="text-blue-700" />
@@ -115,7 +105,7 @@ const Contact = () => {
                   </a>
                 </div>
               </div>
-              
+
               <div className="flex items-start">
                 <div className="flex-shrink-0 bg-blue-100 p-3 rounded-full mr-4">
                   <MapPin size={24} className="text-blue-700" />
@@ -129,17 +119,17 @@ const Contact = () => {
               <div className="pt-6 space-y-4">
                 <h4 className="text-lg font-medium text-blue-900">Professional Profiles</h4>
                 <div className="space-y-2">
-                  <a 
-                    href="https://www.fiverr.com/sellers/abdulmohsin319/edit" 
-                    target="_blank" 
+                  <a
+                    href="https://www.fiverr.com/sellers/abdulmohsin319/edit"
+                    target="_blank"
                     rel="noopener noreferrer"
                     className="text-blue-700 hover:text-blue-900 block"
                   >
                     Fiverr Profile
                   </a>
-                  <a 
-                    href="https://www.upwork.com/freelancers/~01dac677c4d0e7e1ba" 
-                    target="_blank" 
+                  <a
+                    href="https://www.upwork.com/freelancers/~01dac677c4d0e7e1ba"
+                    target="_blank"
                     rel="noopener noreferrer"
                     className="text-blue-700 hover:text-blue-900 block"
                   >
@@ -149,16 +139,16 @@ const Contact = () => {
               </div>
             </div>
           </div>
-          
+
           <div className={`transition-all duration-1000 delay-300 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
             <h3 className="text-2xl font-semibold text-blue-900 mb-6">Send Message</h3>
-            
+
             {formSubmitted ? (
               <div className="bg-green-100 text-green-800 p-4 rounded-md mb-6">
                 Thank you for your message! I will get back to you soon.
               </div>
             ) : null}
-            
+
             <form onSubmit={handleSubmit}>
               <div className="grid grid-cols-1 gap-6">
                 <div>
@@ -172,7 +162,7 @@ const Contact = () => {
                     required
                   />
                 </div>
-                
+
                 <div>
                   <input
                     type="email"
@@ -184,7 +174,7 @@ const Contact = () => {
                     required
                   />
                 </div>
-                
+
                 <div>
                   <input
                     type="text"
@@ -196,7 +186,7 @@ const Contact = () => {
                     required
                   />
                 </div>
-                
+
                 <div>
                   <textarea
                     name="message"
@@ -208,14 +198,13 @@ const Contact = () => {
                     required
                   ></textarea>
                 </div>
-                
+
                 <div>
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className={`w-full bg-blue-700 text-white px-6 py-3 rounded-md font-medium hover:bg-blue-800 transition-colors flex items-center justify-center ${
-                      isSubmitting ? 'opacity-75 cursor-not-allowed' : ''
-                    }`}
+                    className={`w-full bg-blue-700 text-white px-6 py-3 rounded-md font-medium hover:bg-blue-800 transition-colors flex items-center justify-center ${isSubmitting ? 'opacity-75 cursor-not-allowed' : ''
+                      }`}
                   >
                     <Send size={18} className="mr-2" />
                     {isSubmitting ? 'Sending...' : 'Send Message'}
