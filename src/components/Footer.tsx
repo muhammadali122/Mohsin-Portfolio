@@ -1,5 +1,4 @@
-import React from 'react';
-import { Briefcase, Twitter, Linkedin, Github, Instagram } from 'lucide-react';
+import { Briefcase} from 'lucide-react';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
